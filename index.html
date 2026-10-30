@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#141226">
+    <title>Bóng Ma Halloween — 26 màn phiêu lưu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Pixelify+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main class="game-shell">
+      <section class="game" id="game" aria-label="Khu vực chơi Bóng Ma Halloween">
+        <div class="night-scene" aria-hidden="true">
+          <div class="moon"></div>
+          <div class="stars"></div>
+          <div class="cloud cloud-one"></div>
+          <div class="cloud cloud-two"></div>
+          <div class="castle"><i></i><i></i><i></i></div>
+          <div class="hills hills-back"></div>
+          <div class="hills hills-front"></div>
+          <div class="tree tree-left"></div>
+          <div class="tree tree-right"></div>
+          <div class="mist mist-one"></div>
+          <div class="mist mist-two"></div>
+        </div>
+
+        <header class="hud" id="hud">
+          <div class="hud-title">🎃 BÓNG MA HALLOWEEN</div>
+          <div class="hud-stats">
+            <div class="hud-chip">Màn <b id="level">1</b><span>/26</span></div>
+            <div class="hud-chip">Màn này <b id="level-score">0</b></div>
+            <div class="hud-chip">Tổng <b id="total-score">0</b></div>
+            <div class="hud-chip candy-progress" id="candy-progress">🍬 <b id="candy-count">0/0</b></div>
+          </div>
+          <div class="hud-actions">
+            <button class="icon-button" id="mute-btn" type="button" aria-label="Bật hoặc tắt âm thanh">🔊</button>
+            <button class="icon-button" id="settings-btn" type="button" aria-label="Cài đặt">⚙️</button>
+            <button class="icon-button" id="pause-btn" type="button" aria-label="Tạm dừng">Ⅱ</button>
+          </div>
+          <div class="freeze-meter" id="freeze-meter" aria-label="Tiến độ đóng băng ma">
+            <span>👁️ Đóng băng</span><div class="meter-track"><i id="freeze-meter-fill"></i></div>
+          </div>
+        </header>
+
+        <div class="instructions" id="instructions">
+          Di chuyển bằng phím mũi tên / WASD hoặc chạm để đi · Nhìn về phía ma để đóng băng · Chạm giữ nhân vật để kéo
+        </div>
+        <div class="actor-shadow" id="player-shadow"></div>
+        <div class="collect-effect" id="collect-effect" aria-hidden="true"></div>
+        <div class="name-display" id="player-name-display"></div>
+        <div class="actor glow" id="player" aria-label="Người chơi"></div>
+        <div class="name-display" id="spook-name-display"></div>
+        <div class="actor glow" id="spook" aria-label="Bóng ma"></div>
+        <div id="mini-ghosts"></div>
+        <div id="candies"></div>
+        <div id="webs"></div>
+        <div class="floor"></div>
+        <div class="boo-scare" id="boo-scare" aria-hidden="true">BOO! 👻</div>
+        <div class="pause-banner" id="pause-banner" aria-hidden="true">TẠM DỪNG</div>
+      </section>
+
+      <section class="modal-overlay visible" id="intro-modal" role="dialog" aria-modal="true" aria-labelledby="intro-title">
+        <div class="modal-content intro-card">
+          <div class="eyebrow">MỘT CUỘC PHIÊU LƯU KẸO NGỌT</div>
+          <h1 id="intro-title">Bóng Ma<br><span>Halloween</span></h1>
+          <div class="intro-mascot" aria-hidden="true">👻</div>
+          <p>Ma nhỏ đang canh giữ những viên kẹo! Hãy chọn người bạn đồng hành và vượt qua đủ <b>26 màn chơi</b>.</p>
+          <div class="button-stack">
+            <button class="button primary" id="start-game-btn" type="button">Bắt đầu chơi <span>→</span></button>
+            <button class="button" id="open-help-btn" type="button">📖 Hướng dẫn</button>
+            <button class="button" id="open-settings-from-intro-btn" type="button">⚙️ Cài đặt</button>
+          </div>
+          <div class="intro-footnote">Dùng bàn phím, chuột hoặc màn hình cảm ứng</div>
+        </div>
+      </section>
+
+      <section class="modal-overlay" id="character-modal" role="dialog" aria-modal="true" aria-labelledby="character-title">
+        <div class="modal-content character-card">
+          <div class="eyebrow">CHỌN BẠN ĐỒNG HÀNH</div>
+          <h2 id="character-title">Ai sẽ đi săn kẹo?</h2>
+          <div class="character-layout">
+            <div class="character-list" id="character-list" aria-label="Danh sách nhân vật"></div>
+            <div class="character-preview-panel">
+              <div class="preview-stage"><div class="preview-sparkle">✦</div><div class="character-preview" id="character-preview"><span class="pixel-art" id="character-preview-art"></span></div></div>
+              <h3 id="character-name"></h3>
+              <p id="character-description"></p>
+              <span class="selected-label" id="selected-label">✓ ĐÃ CHỌN</span>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="button" id="character-back-btn" type="button">← Quay lại</button>
+            <button class="button primary" id="confirm-character-btn" type="button">Xác nhận & tiếp tục</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="modal-overlay" id="level-intro-modal" role="dialog" aria-modal="true" aria-labelledby="level-intro-title">
+        <div class="modal-content level-card">
+          <div class="eyebrow" id="level-kicker">CHẶNG PHIÊU LƯU</div>
+          <div class="level-number" id="level-number">MÀN 01 <span>/ 26</span></div>
+          <h2 id="level-intro-title">Nghĩa địa trăng non</h2>
+          <p id="level-description"></p>
+          <div class="level-preview" aria-hidden="true"><span>🍬</span><span>👻</span><span>🕸️</span><span>🎃</span></div>
+          <button class="button primary" id="begin-level-btn" type="button">Vào màn chơi ✨</button>
+        </div>
+      </section>
+
+      <section class="modal-overlay" id="pause-modal" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+        <div class="modal-content compact-card">
+          <div class="eyebrow">TẠM NGHỈ MỘT CHÚT</div>
+          <h2 id="pause-title">Đứng yên nào! 👻</h2>
+          <p>Ma cũng cần nghỉ lấy hơi...</p>
+          <div class="button-stack">
+            <button class="button primary" id="resume-btn" type="button">▶ Tiếp tục</button>
+            <button class="button" id="replay-level-btn" type="button">↻ Chơi lại màn này</button>
+            <button class="button" id="pause-settings-btn" type="button">⚙️ Cài đặt âm thanh</button>
+            <button class="button quiet" id="home-btn" type="button">⌂ Về màn hình chính</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="modal-overlay" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="modal-content compact-card">
+          <div class="eyebrow">TÙY CHỈNH CUỘC PHIÊU LƯU</div>
+          <h2 id="settings-title">⚙️ Cài đặt</h2>
+          <label for="player-name-input">Tên người chơi</label>
+          <input type="text" id="player-name-input" maxlength="15" autocomplete="nickname" placeholder="Tên của bạn">
+          <label for="spook-name-input">Tên bóng ma</label>
+          <input type="text" id="spook-name-input" maxlength="10" placeholder="Ghost">
+          <button class="button" id="settings-mute-btn" type="button">🔊 Âm thanh: bật</button>
+          <button class="button primary" id="save-settings-btn" type="button">Lưu & quay lại</button>
+        </div>
+      </section>
+
+      <section class="modal-overlay" id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title">
+        <div class="modal-content compact-card help-card">
+          <div class="eyebrow">MẸO SỐNG SÓT</div>
+          <h2 id="help-title">Cách chơi</h2>
+          <ul>
+            <li><b>Di chuyển:</b> phím mũi tên / WASD, chạm điểm đến hoặc vuốt.</li>
+            <li><b>Đóng băng ma:</b> quay mặt về phía ma và giữ khoảng cách gần.</li>
+            <li><b>Kéo để thoát:</b> chạm giữ nhân vật rồi kéo đến vị trí an toàn.</li>
+            <li><b>Thu thập kẹo:</b> gom hết kẹo để mở cổng dịch chuyển.</li>
+            <li><b>Cẩn thận:</b> mạng nhện làm chậm và khiến bạn rơi mất kẹo.</li>
+            <li><b>Vật phẩm:</b> nước tăng tốc, kẹo nam châm và tim đẩy lùi ma.</li>
+          </ul>
+          <button class="button primary" id="close-help-btn" type="button">Đã hiểu!</button>
+        </div>
+      </section>
+
+      <section class="modal-overlay" id="level-complete-modal" role="dialog" aria-modal="true" aria-labelledby="complete-title">
+        <div class="modal-content compact-card celebration-card">
+          <div class="celebration-icon" aria-hidden="true">🎉</div>
+          <div class="eyebrow">CỔNG DỊCH CHUYỂN ĐÃ MỞ</div>
+          <h2 id="complete-title">Qua màn rồi!</h2>
+          <p id="complete-subtitle"></p>
+          <div class="score-summary"><span>Điểm màn này</span><b id="complete-level-score">0</b></div>
+          <div class="score-summary"><span>Tổng điểm</span><b id="complete-total-score">0</b></div>
+          <button class="button primary" id="next-level-btn" type="button">Sang màn tiếp theo →</button>
+        </div>
+      </section>
+
+      <section class="modal-overlay" id="victory-modal" role="dialog" aria-modal="true" aria-labelledby="victory-title">
+        <div class="modal-content victory-card">
+          <div class="fireworks" aria-hidden="true">🍬　✨　🎆　🍭　🎇　✨　🍬</div>
+          <div class="eyebrow">CHIẾN THẮNG HUYỀN THOẠI</div>
+          <div class="victory-avatar" id="victory-avatar" aria-hidden="true">👻</div>
+          <h2 id="victory-title">🎃 CHÚC MỪNG NHÀ THÁM HIỂM! 🎃</h2>
+          <div class="victory-message">
+            <p>Bạn đã vượt qua 26 màn chơi đầy thử thách và thu thập đủ những viên kẹo Halloween!</p>
+            <p>Cảm ơn bạn đã đồng hành cùng chúng mình trong chuyến phiêu lưu năm nay.</p>
+            <p>Chúc bạn luôn vui vẻ, hạnh phúc và có một mùa Halloween thật tuyệt vời!</p>
+            <p class="goodbye">👻 HẸN GẶP LẠI BẠN VÀO HALLOWEEN NĂM SAU! 🎃</p>
+          </div>
+          <div class="final-score">TỔNG ĐIỂM CUỐI CÙNG <b id="win-score-display">0</b></div>
+          <div class="button-stack">
+            <button class="button primary" id="play-again-btn" type="button">↻ Chơi lại từ đầu</button>
+            <button class="button" id="victory-achievements-btn" type="button">🏅 Xem thành tích</button>
+            <button class="button quiet" id="victory-home-btn" type="button">⌂ Về màn hình chính</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="modal-overlay" id="achievements-modal" role="dialog" aria-modal="true" aria-labelledby="achievements-title">
+        <div class="modal-content compact-card">
+          <div class="eyebrow">HỒ SƠ NHÀ THÁM HIỂM</div>
+          <h2 id="achievements-title">🏅 Thành tích</h2>
+          <div class="achievement-list" id="achievement-list"></div>
+          <button class="button primary" id="close-achievements-btn" type="button">Quay lại</button>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="js/game.js"></script>
+  </body>
+</html>
